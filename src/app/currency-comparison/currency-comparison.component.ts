@@ -165,7 +165,7 @@ export class CurrencyComparisonComponent implements OnInit {
       this.showChart=true;
       let ratesList = [];
       let datesList = [];
-      for(let i=this.timeSeriesExchangeRate.length-1;i>=0;i--){
+      for(let i=0;i<this.timeSeriesExchangeRate.length;i++){
         ratesList.push(this.timeSeriesExchangeRate[i]);
         datesList.push(this.dateTimeSeriesExchangeRate[i]);
       }
