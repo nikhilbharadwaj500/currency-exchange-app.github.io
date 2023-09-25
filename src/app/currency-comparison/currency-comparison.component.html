@@ -1,24 +1,32 @@
 <div class="container">
   <h1 class="header">Currency Comparison</h1>
+  <form [formGroup]="currencyForm" (ngSubmit)="compareCurrencies()">
   <div class="mat-form-field">
     <label class="base" for="baseCurrency">Base Currency:</label>
-    <input placeholder="Base Currency" [(ngModel)]="baseCurrency" id="baseCurrency" matInput  name="baseCurrency" required/>
+    <select id="baseCurrency" formControlName="baseCurrency">
+      <!-- Populate the base currency dropdown -->
+      <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
+    </select>
   </div>
   <div class="mat-form-field">
     <label class="target" for="targetCurrency">Target Currency:</label>
-    <input placeholder="Target Currency" [(ngModel)]="targetCurrency" id="targetCurrency" matInput name="targetCurrency" required />
+    <select id="targetCurrency" formControlName="targetCurrency">
+      <!-- Populate the target currency dropdown -->
+      <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</option>
+    </select>
   </div>
   <div class="mat-form-field">
     <label>Start Date:</label>
-    <input type="date" id="fromdate" [(ngModel)]="fromDate" matInput name="startDate" required />
+    <input type="date" id="fromdate"  formControlName="fromDate" required />
   </div>
   <div class="mat-form-field">
     <label>End Date:</label>
-    <input id="todate" type="date" [(ngModel)]="toDate" matInput name="endDate" required/>
+    <input id="todate" type="date" formControlName="endDate" required/>
   </div>
   <div>
-    <button (click)="compareCurrencies()" mat-raised-button color="primary">Compare</button>
+    <button type="submit" [disabled]="currencyForm.invalid" mat-raised-button color="primary">Compare</button>
   </div>
+</form>
   <div>
     <p class="currentRate">Current Exchange Rate: {{ exchangeRate }}</p>
     <!-- <p>TimeSeries Historical Exchange Rate: {{ timeSeriesExchangeRate.join(',') }}</p>

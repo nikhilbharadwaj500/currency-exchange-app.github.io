@@ -17,6 +17,7 @@ import {
   ApexYAxis,
   ApexNoData
 } from "ng-apexcharts";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -39,6 +40,9 @@ export type ChartOptions = {
   styleUrls: ['./currency-comparison.component.css'],
 })
 export class CurrencyComparisonComponent implements OnInit {
+
+  currencyForm: FormGroup=new FormGroup({});;
+
   baseCurrency: string = '';
   targetCurrency: string = '';
   currency: string = '';
@@ -49,15 +53,27 @@ export class CurrencyComparisonComponent implements OnInit {
   toDate: string = '';
   currencyChartOptions? : Partial<ChartOptions> | any;
   showChart : boolean = false;
+  // Define an array of available currencies
+  currencies: string[] = [
+    'AED', 'ALL', 'AOA', 'JPY', 'ARS', 'AUD', 'BDT', 'BGN', 'BHD', 'BRL','CAD','CHF','CLP','CNH','CNY','COP','CZK','DKK','EGP','EUR','GBP','GHS','HKD','HRK','HUF','IDR','ILS','INR','ISK','JOD','JPY','KES','KRW','KWD','LBP','LKR','MAD','MUR','MXN','MYR','NGN','NOK','NZD','OMR','PEN','PHP','PKR','PLN','QAR','RON','RUB','SAR','SEK','SGD','THB','TND','TRY','TWD','USD','VND','XAF','XAG','XAU','XOF','XPD','XPT','ZAR','ZWL',
+  ];
 
   
 
-  constructor(private currencyService: CurrencyService) {}
+  constructor(private currencyService: CurrencyService,private formBuilder: FormBuilder) {
+    
+  }
 
   ngOnInit() {
+    this.currencyForm = this.formBuilder.group({
+      baseCurrency: [this.baseCurrency, Validators.required],
+      targetCurrency: [this.targetCurrency, Validators.required],
+      fromDate:[this.fromDate],
+      endDate:[this.toDate]
+    });
     this.compareCurrencies();
     this.initCurrencyChart();
-    this.compareHistoricalTimeSeriesCurrencies();
+  //this.compareHistoricalTimeSeriesCurrencies();
   }
 
   initCurrencyChart()
@@ -129,16 +145,16 @@ export class CurrencyComparisonComponent implements OnInit {
   }
 
   compareCurrencies() {
-    if(this.baseCurrency && this.targetCurrency)
+    if(this.currencyForm.value.baseCurrency && this.currencyForm.value.targetCurrency)
     {
-    this.currency = `${this.baseCurrency}${this.targetCurrency}`; // Concatenate the currencies.
+    this.currency = `${this.currencyForm.value.baseCurrency}${this.currencyForm.value.targetCurrency}`; // Concatenate the currencies.
     this.currencyService
       .getExchangeRates(this.currency)
       .subscribe((data: any) => {
         console.log(data); // Log the data received from the API
         this.exchangeRate = data.quotes[0].mid;
        // this.compareHistoricalCurrencies();
-        if(this.fromDate && this.toDate)
+        if(this.currencyForm.value.fromDate && this.currencyForm.value.endDate)
         {
          this.compareHistoricalTimeSeriesCurrencies();
         }
@@ -148,7 +164,7 @@ export class CurrencyComparisonComponent implements OnInit {
 
   compareHistoricalTimeSeriesCurrencies()
   {
-    this.currencyService.getHistoricalTimeSeriesExchangeRates(this.currency,this.fromDate,this.toDate,'records').subscribe((data:any)=>{
+    this.currencyService.getHistoricalTimeSeriesExchangeRates(this.currency,this.currencyForm.value.fromDate,this.currencyForm.value.endDate,'records').subscribe((data:any)=>{
       console.log(data);//Log the data recieved from the API
       for(let i = 0;i<data.quotes.length;i++) { 
         console.log(data.quotes[i]);
