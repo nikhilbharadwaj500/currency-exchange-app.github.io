@@ -58,8 +58,6 @@ export class CurrencyComparisonComponent implements OnInit {
     'AED', 'ALL', 'AOA', 'JPY', 'ARS', 'AUD', 'BDT', 'BGN', 'BHD', 'BRL','CAD','CHF','CLP','CNH','CNY','COP','CZK','DKK','EGP','EUR','GBP','GHS','HKD','HRK','HUF','IDR','ILS','INR','ISK','JOD','JPY','KES','KRW','KWD','LBP','LKR','MAD','MUR','MXN','MYR','NGN','NOK','NZD','OMR','PEN','PHP','PKR','PLN','QAR','RON','RUB','SAR','SEK','SGD','THB','TND','TRY','TWD','USD','VND','XAF','XAG','XAU','XOF','XPD','XPT','ZAR','ZWL',
   ];
 
-  
-
   constructor(private currencyService: CurrencyService,private formBuilder: FormBuilder) {
     
   }
@@ -153,7 +151,6 @@ export class CurrencyComparisonComponent implements OnInit {
       .subscribe((data: any) => {
         console.log(data); // Log the data received from the API
         this.exchangeRate = data.quotes[0].mid;
-       // this.compareHistoricalCurrencies();
         if(this.currencyForm.value.fromDate && this.currencyForm.value.endDate)
         {
          this.compareHistoricalTimeSeriesCurrencies();
@@ -166,6 +163,8 @@ export class CurrencyComparisonComponent implements OnInit {
   {
     this.currencyService.getHistoricalTimeSeriesExchangeRates(this.currency,this.currencyForm.value.fromDate,this.currencyForm.value.endDate,'records').subscribe((data:any)=>{
       console.log(data);//Log the data recieved from the API
+      this.timeSeriesExchangeRate =[];
+      this.dateTimeSeriesExchangeRate=[];
       for(let i = 0;i<data.quotes.length;i++) { 
         console.log(data.quotes[i]);
         this.timeSeriesExchangeRate[i] = data.quotes[i].close;
